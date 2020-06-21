@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Test</title>
+</head>
+<style type="text/css">
+	html, body {
+		padding: 0;
+		margin: 0;
+		width: 100%;
+		height: 100%;
+		overflow: hidden;
+	}
+
+	#musicPlayer {
+		display: block;
+		margin: auto;
+		position: fixed;
+		top: 0;
+		left: 0;
+		z-index: 9;
+	}
+
+	#canvas {
+		width: 100%;
+		height: 100%;
+		position: relative;
+		display: block;
+	}
+</style>
+<body>
+	<audio id="musicPlayer" controls>
+		<source src="seventeen.mp3" type="audio/mpeg">
+	</audio>
+	<div id="canvas"></div>
+</body>
+</html>
+
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/threejs/r69/three.min.js"></script> -->
+<script type="text/javascript" src="js/three.js"></script>
+<script type="text/javascript" src="js/orbitControls.js"></script>
+<script type="text/javascript" src="js/auxilary.js"></script>
+<script type="text/javascript">
+	// Simple three.js example
+
+var mesh, renderer, scene, camera, controls;
+
+init();
+animate();
+console.log("test");
+
+function init() {
+
+    // renderer
+    renderer = new THREE.WebGLRenderer();
+    renderer.setSize( window.innerWidth, window.innerHeight );
+    document.body.appendChild( renderer.domElement );
+
+    // scene
+    scene = new THREE.Scene();
+    
+    // camera
+    camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 10000 );
+    camera.position.set( -3000, -4000, -5000);
+
+    // controls
+    controls = new THREE.OrbitControls( camera );
+    
+    // ambient
+    scene.add( new THREE.AmbientLight( 0x222222 ) );
+    
+    // light
+    var light = new THREE.DirectionalLight( 0xffffff, 1 );
+    light.position.set( 2000, 2000, 0 );
+    scene.add( light );
+    
+    // axes
+    scene.add( new THREE.AxisHelper( 20 ) );
+
+    // geometry
+    var cylGeom = new THREE.CylinderGeometry(1000, 100, 1000, 200, 200, true),
+    cylMat = new THREE.MeshPhongMaterial({
+            wireframe: true,
+            side: THREE.DoubleSide,
+            vertexColors: THREE.VertexColors
+    }), 
+    cylinderMesh = new THREE.Mesh(cylGeom, cylMat);
+
+    cylinderMesh.name = "cylinder";
+    scene.add(cylinderMesh);
+
+    cylinder = scene.getObjectByName("cylinder"),
+    cylinderVert = cylinder.geometry.vertices;
+
+    for (var i = cylinder.geometry.faces.length - 1; i >= 0; i--) {
+        for (var n = 2; n >= 0; n--) {
+            cylinder.geometry.faces[i].vertexColors[n] = new THREE.Color(Math.random() * 0xffffff);
+        }
+    }
+
+    cylinder.position.x = 0;
+    cylinder.position.y = 0;
+    cylinder.position.z = 0;
+    cylinder.colorsNeedUpdate = true;
+    
+    
+    
+}
+
+function animate() {
+
+    requestAnimationFrame( animate );
+    
+    //controls.update();
+
+    renderer.render( scene, camera );
+
+}
+
+</script>

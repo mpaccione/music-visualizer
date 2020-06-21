@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Music Visualization Game</title>
+</head>
+<style type="text/css">
+	html, body {
+		padding: 0;
+		margin: 0;
+		width: 100%;
+		height: 100%;
+		overflow: hidden;
+		cursor: none !important;
+		font-family: galaxy, sans-serif;
+	}
+
+	#musicPlayer {
+		display: block;
+		margin: auto;
+		position: fixed;
+		top: 0;
+		left: 0;
+		z-index: 9;
+	}
+
+	#canvas {
+		width: 100%;
+		height: 100%;
+		position: relative;
+		display: block;
+	}
+
+	#menu {
+		position: fixed;
+		display: none;
+		z-index: 9;
+		top: 50%;
+		left: 50%;
+		transform: translateX(-50%) translateY(-50%);
+		font-size: 2em;
+		color: white;
+		font-family: sans-serif;
+		background-color: transparent;
+		height: auto;
+		width: auto;
+		text-align: center;
+	}
+
+	#landing {
+		background-image: url("loadingBg.jpg");
+		background-repeat: no-repeat;
+		background-size: cover;
+		background-position: center;
+		height: 100%;
+		width: 100%;
+		position: fixed;
+		top: 0;
+		left: 0;
+		cursor: default;
+		filter: blur(0.5);
+		-webkit-filter: blur(0.5);
+
+	}
+
+	#landing h1 {
+		text-align: center;
+		display: block;
+		width: 100%;
+		color: white;
+		font-size: 4em;
+		top: 25%;
+	}
+
+	#laptop, #vr {
+		background-position: center;
+		background-repeat: no-repeat;
+		background-size: contain;
+		width: 50%;
+		height: 100%;
+		display: inline-block;
+	}
+
+	#laptop {
+		background-image: url("laptopIcon.png");
+	}
+
+	#vr {
+		background-image: url("vrIcon.png");
+	}
+
+	#menuWrap {
+		height: 50%;
+		width: 50%;
+		top: 50%;
+		left: 50%;
+		font-size: 2em;
+		transform: translateY(-50%) translateX(-50%);
+		display: block;
+		position: fixed;
+		color: white;
+		text-align: center;
+	}
+
+	#laptopWrap, #vrWrap {
+		width: 49%;
+		height: 100%;
+		display: none;
+		cursor: pointer;
+		opacity: 0.5;
+	}
+
+	#laptopWrap:hover, #vrWrap:hover {
+		opacity: 1;
+	}
+
+	#songPicker {
+		display: block;
+		width: 100%;
+		height: 100%;
+		margin-top: -5%;
+	}
+
+	table {
+		width: 100%;
+		height: 90%;
+		border-spacing: 0px;
+	}
+
+	table th {
+		border: 2px solid black;
+		color: black;
+		background-color: white;
+	}
+
+	table td {
+		border-bottom: 1px solid white;
+	}
+
+	table tr:hover {
+		cursor: pointer;
+	}
+
+	table td {
+		font-size: 0.7em;
+		text-align: left;
+		padding: 5px;
+	}
+
+	.selected {
+		background-color: white;
+		color: black;
+	}
+
+	tr.selected td {
+		border: 2px solid black;
+	}
+
+	button {
+		font-size: 1.4em;
+		background-color: white;
+		color: black;
+		padding: 20px;
+		font-family: galaxy;
+		cursor: not-allowed;
+		margin-top: 5%;
+		opacity: 0.5;
+	}
+
+	@font-face {
+	    font-family: 'galaxy';
+	    src: url('fonts/DISTGRG_-webfont.eot');
+	    src: url('fonts/DISTGRG_-webfont.eot?#iefix') format('embedded-opentype'),
+	         url('fonts/DISTGRG_-webfont.woff') format('woff'),
+	         url('fonts/DISTGRG_-webfont.ttf') format('truetype'),
+	         url('fonts/DISTGRG_-webfont.svg#distant_galaxyregular') format('svg');
+	    font-weight: normal;
+	    font-style: normal;
+	}
+
+	@media (max-width: 799px) and (orientation: landscape) {
+		#landing {
+			background-image: url("loadingBg_mobile.jpg");
+		}
+
+		#landing h1 {
+			font-size: 2.5em;
+			margin-top: 0px;
+		}
+
+		#landing h2 {
+			display: none;
+		}
+
+		#menuWrap {
+			width: 100%;
+			height: 100%;
+			position: relative;
+			top: initial;
+			left: initial;
+			transform: none;
+		}
+
+		#songPicker {
+			height: 93%;
+			overflow-y: scroll;
+		}
+
+		#laptopWrap, #vrWrap {
+			height: 50%;
+		}
+
+		table {
+			font-size: 0.6em;
+			position: relative;
+			height: 50%;
+			overflow-y: scroll;
+		}
+	}
+
+</style>
+<body>
+
+	<audio id="musicPlayer">
+		<!-- <source src="sugasuga.mp3" type="audio/mpeg"> -->
+		<source id="mp3Source" src="" type="audio/mpeg">
+	</audio>
+	<div id="menu">Game Over</div>
+	<div id="canvas"></div>
+	<div id="landing">
+		<h1>The Space-Sound Continuum</h1>
+		<div id="menuWrap">
+			<div id="songPicker">
+				<h2>Pick a Song</h2>
+				<table>
+					<thead>
+						<th>Title</th>
+						<th>Artist</th>
+						<th>Difficulty</th>
+					</thead>
+					<tbody>
+						<tr data-file="leBanquet.mp3">
+							<td>Le Banquet</td>
+							<td>C2C</td>
+							<td>Hard</td>
+						</tr>
+						<tr data-file="seventeen.mp3">
+							<td>Seventeen Years</td>
+							<td>Ratatat</td>
+							<td>Hard</td>
+						</tr>
+						<tr data-file="unfallenKingdom.mp3">
+							<td>The Unfallen Kingdom</td>
+							<td>Gramatik</td>
+							<td>Medium-Hard</td>
+						</tr>
+						<tr data-file="soulVibration.mp3">
+							<td>Soul Vibration</td>
+							<td>J Walk</td>
+							<td>Medium</td>
+						</tr>
+						<tr data-file="organDonor.mp3">
+							<td>Organ Donor</td>
+							<td>Lefties Soul Connection</td>
+							<td>Medium</td>
+						</tr>
+						<tr data-file="ikesMood.mp3">
+							<td>Ikes Mood 1</td>
+							<td>Visioneers</td>
+							<td>Medium</td>
+						</tr>
+						<tr data-file="playazClub.mp3">
+							<td>Playaz Club (Instrumental)</td>
+							<td>Rappin 4-Tay</td>
+							<td>Easy</td>
+						</tr>
+					</tbody>
+				</table>
+				<div style="display: inline-block; vertical-align: top; margin-right: 5%;">
+					<h3>Upload Song</h3>
+					<input id="fileInput" type="file" name=""></input>
+				</div>
+				<button style="vertical-align: top; margin-left: 5%">Play</button>
+			</div>
+			<div id="laptopWrap" onclick="startGame()">
+				<div id="laptop"></div>
+				<p>Desktop/Laptop with Keyboard</p>
+			</div>
+			<div id="vrWrap">
+				<div id="vr"></div>
+				<p>Virtual Reality with Supported Devices</p>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
+
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/threejs/r69/three.min.js"></script> -->
+<script type="text/javascript" src="js/three.js"></script>
+<script type="text/javascript" src="js/orbitControls.js"></script>
+<script type="text/javascript" src="js/tween.js"></script>
+<script type="text/javascript" src="js/threeoctree.min.js"></script>
+
+<script type="text/javascript" src="js/ConvolutionShader.js"></script>
+<script type="text/javascript" src="js/CopyShader.js"></script>
+
+<script type="text/javascript" src="js/EffectComposer.js"></script>
+<script type="text/javascript" src="js/RenderPass.js"></script>
+<script type="text/javascript" src="js/BloomPass.js"></script>
+<script type="text/javascript" src="js/MaskPass.js"></script>
+<script type="text/javascript" src="js/ShaderPass.js"></script>
+
+<script type="text/javascript" src="js/StereoEffect.js"></script>
+<script type="text/javascript" src="js/DeviceOrientationControls.js"></script>
+
+<script type="text/javascript" src="js/globals.js"></script>
+<script type="text/javascript" src="js/shaderLib.js"></script>
+<script type="text/javascript" src="js/auxilary.js"></script>
+<script type="text/javascript" src="js/script.js"></script>
